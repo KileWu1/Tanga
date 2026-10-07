@@ -1,0 +1,29 @@
+name: 補抓歷史資料
+on:
+  schedule:
+    - cron: '15 20 * * *'   # 台灣時間每天凌晨 4:15（歷史已補齊，每天一次就夠）
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: data
+  cancel-in-progress: false
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -u backfill.py
+        env:
+          BUDGET_MIN: '300'
+      - run: |
+          git config user.name "kk-ma-tool-bot"
+          git config user.email "kk-ma-tool-bot@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet && exit 0
+          git commit -m "補抓歷史資料"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 10; done; exit 1
