@@ -1,0 +1,52 @@
+name: 每日更新收盤資料
+on:
+  schedule:
+    # GitHub 的排程常常延遲好幾個小時（實測 15:40 的排程晚到 22 點多才跑），
+    # 所以一天提早排好幾次；早到的那次會在下面「等收盤資料」那步等到 15:35 再開始抓。
+    - cron: '40 23 * * 0-4'   # 台灣 週一～五 07:40
+    - cron: '40 1 * * 1-5'    # 09:40
+    - cron: '40 3 * * 1-5'    # 11:40
+    - cron: '40 5 * * 1-5'    # 13:40
+    - cron: '40 7 * * 1-5'    # 15:40
+    - cron: '40 9 * * 1-5'    # 17:40
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: data
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 等收盤資料（今天已更新就直接結束；平日 15:35 前先等；抓到今天的資料為止，最晚等到 20:00）
+        run: |
+          today=$(TZ=Asia/Taipei date +%Y%m%d); dow=$(TZ=Asia/Taipei date +%u)
+          last() { python -c "import json;print(json.load(open('data/px.json'))['d'][-1])"; }
+          if [ "$(last)" = "$today" ]; then echo "今天的資料已經更新過"; echo "DONE=1" >> $GITHUB_ENV; exit 0; fi
+          hol=$(python -c "import json;print(1 if $today in json.load(open('data/holidays.json')).get('closed',[]) else 0)" 2>/dev/null || echo 0)
+          if [ "$dow" -gt 5 ] || [ "$hol" = "1" ]; then echo "今天休市，只補抓之前缺的"; python -u update.py; exit 0; fi
+          while [ "$(TZ=Asia/Taipei date +%H%M)" -lt 1535 ]; do sleep 300; done
+          for i in $(seq 1 30); do
+            python -u update.py
+            if [ "$(last)" = "$today" ]; then echo "已抓到今天的資料"; exit 0; fi
+            if [ "$(TZ=Asia/Taipei date +%H%M)" -ge 2000 ]; then echo "到 20:00 還沒有今天的資料（可能臨時休市）"; exit 0; fi
+            sleep 600
+          done
+      - if: env.DONE != '1'
+        run: python -u backfill.py
+        env:
+          BUDGET_MIN: '20'
+      - if: env.DONE != '1'
+        run: |
+          git config user.name "kk-ma-tool-bot"
+          git config user.email "kk-ma-tool-bot@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet && exit 0
+          git commit -m "更新收盤資料"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; git rebase --abort 2>/dev/null; sleep 10; done; exit 1

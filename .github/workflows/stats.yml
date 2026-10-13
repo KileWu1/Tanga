@@ -1,0 +1,44 @@
+name: 每季重算股性
+on:
+  schedule:
+    - cron: '30 11 5-9 1,4,7,10 *'   # 5～9 號每天都排一次，GitHub 排程失敗時隔天會自動補跑；本季跑過就跳過
+  workflow_dispatch:
+    inputs:
+      check:
+        description: '只比對 2026/10/1 版（不更新）'
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: data
+  cancel-in-progress: false
+jobs:
+  stats:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 本季已經重算過就跳過（只有排程啟動才檢查）
+        if: ${{ github.event_name == 'schedule' }}
+        run: |
+          m=$(TZ=Asia/Taipei date +%Y%m)05
+          t=$(python -c "import json;print(json.load(open('data/stats_meta.json'))['to'])")
+          if [ "$t" -ge "$m" ]; then echo "本季已重算（資料到 $t），跳過"; echo "SKIP=1" >> $GITHUB_ENV; fi
+      - if: ${{ env.SKIP != '1' }}
+        run: pip install numpy pandas
+      - if: ${{ env.SKIP != '1' && inputs.check }}
+        run: python -u stats.py --check 20261001
+      - if: ${{ env.SKIP != '1' && !inputs.check }}
+        run: python -u stats.py
+      - if: ${{ env.SKIP != '1' && !inputs.check }}
+        run: |
+          git config user.name "kk-ma-tool-bot"
+          git config user.email "kk-ma-tool-bot@users.noreply.github.com"
+          git add data
+          git diff --cached --quiet && exit 0
+          git commit -m "每季重算股性"
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 10; done; exit 1

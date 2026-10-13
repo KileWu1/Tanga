@@ -1,0 +1,21 @@
+name: 網頁全市場檢查
+on:
+  workflow_run:
+    workflows: ['每日更新收盤資料', '補抓歷史資料']
+    types: [completed]
+  push:
+    paths: ['index.html', 'check/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm install --no-save --silent jsdom@24
+      - run: node check/check.js
