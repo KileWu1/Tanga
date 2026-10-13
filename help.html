@@ -1,0 +1,145 @@
+<!DOCTYPE html><html lang="zh-Hant"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>乖乖值怎麼看｜使用說明</title><style>
+:root{
+  --bg:#EEF4EC; --panel:#FFFFFF; --ink:#18261B; --sub:#5B6B5E; --line:#CFDCCD;
+  --green:#2E8B3E; --five:#D9A21B; --mid:#8FA33A; --warn:#E07B24; --hot:#C8312B; --cold:#3D7FB0;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121A14; --panel:#1B261E; --ink:#E6EFE6; --sub:#9AAE9D; --line:#2F4033;
+    --green:#4FB861; --five:#F0C040; --mid:#B2C55A; --warn:#F2954A; --hot:#EF5B52; --cold:#6BA9D6;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121A14; --panel:#1B261E; --ink:#E6EFE6; --sub:#9AAE9D; --line:#2F4033;
+  --green:#4FB861; --five:#F0C040; --mid:#B2C55A; --warn:#F2954A; --hot:#EF5B52; --cold:#6BA9D6;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.6;font-variant-numeric:tabular-nums}
+main{max-width:760px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:2rem;font-weight:900;margin:0 0 4px;color:var(--green);letter-spacing:.02em}
+.lead{color:var(--sub);margin:0 0 20px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+label{font-weight:700;display:block;margin-bottom:6px}
+input,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px}
+textarea{min-height:180px;font-size:.95rem}
+.hint{font-size:.88rem;color:var(--sub);margin:8px 0 0}
+.hint code{background:var(--bg);padding:1px 5px;border-radius:4px}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.pz{color:#1F5F9E}
+@media (prefers-color-scheme: dark){.pz{color:#8EC1EA}}
+button{font:inherit;font-weight:700;border:0;border-radius:999px;padding:10px 22px;cursor:pointer;background:var(--green);color:#fff}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--five);outline-offset:2px}
+.err{color:var(--hot);font-weight:700;margin-top:10px}
+.big{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.num{font-size:4.2rem;font-weight:900;line-height:1}
+.badge{display:inline-block;padding:4px 14px;border-radius:999px;color:#fff;font-weight:700;margin-bottom:8px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:14px}
+.fact{border-top:3px solid var(--line);padding-top:8px}
+.fact b{display:block;font-size:1.25rem}
+.fact span{color:var(--sub);font-size:.9rem}
+.checks{list-style:none;padding:0;margin:10px 0 0}
+.checks li{padding:6px 0;border-bottom:1px dashed var(--line)}
+.ok{color:var(--green);font-weight:700}.no{color:var(--hot);font-weight:700}.na{color:var(--sub);font-weight:700}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:520px;font-size:.92rem}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+th:first-child,td:first-child{text-align:left}
+th{color:var(--sub);font-weight:500}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.88rem;color:var(--sub);margin-top:8px}
+svg{max-width:100%;display:block}
+h2{font-size:1.15rem;margin:0 0 10px}
+.note{font-size:.88rem;color:var(--sub)}
+table.flow{min-width:0}
+table.flow th{text-align:left;white-space:nowrap;vertical-align:top;color:var(--sub);width:6.5em}
+table.flow td{text-align:left;white-space:normal;line-height:1.7}
+details.fold>summary{cursor:pointer;font-weight:700;color:var(--green);margin-top:12px;padding:6px 0}
+table.mini{min-width:0;width:auto;font-size:.9rem;margin:6px 0}
+table.mini th,table.mini td{padding:4px 10px}
+.phead{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.phead h2{margin:0}
+.zbtn{padding:4px 16px}
+.pcwrap{display:flex;gap:14px;align-items:flex-start}
+.pclg{flex:0 0 150px;flex-direction:column;flex-wrap:nowrap;gap:4px;margin-top:0;font-size:.8rem;line-height:1.4;color:var(--ink)}
+#pchart{flex:1;min-width:0}
+#chart svg,#pchart svg{width:100%;height:auto}
+@media (max-width:700px){.pcwrap{flex-direction:column}.pclg{flex-direction:row;flex-wrap:wrap;flex-basis:auto}}
+</style>
+<style>.flow th{white-space:nowrap;text-align:left;vertical-align:top} .dot{margin-right:6px} section.panel h2{margin-top:0}</style>
+</head><body><main>
+<p style="margin:0 0 8px"><a href="./" style="color:var(--green);font-weight:700">回乖乖值計算器</a></p>
+<h1>乖乖值怎麼看</h1>
+<p class="lead">一頁看懂：數字代表什麼、顏色怎麼分、往哪個方向走是好是壞。</p>
+
+<section class="panel">
+<h2>乖乖值是什麼</h2>
+<p>乖乖值＝<b>5日線 ÷ 10日線</b>換算出來的數字，看短線均線被拉開多少。<br>
+數字越大＝短線越熱；數字是負的＝5日線已經跌到10日線下面。</p>
+<p class="hint">每檔股票的「熱度標準」不一樣，網頁已經依這檔過去的表現換算好，<b>直接看顏色就好</b>，不用背數字。</p>
+</section>
+
+<section class="panel">
+<h2>看顏色：現在在哪一區</h2>
+<table class="flow">
+<tr><th><i class="dot" style="background:var(--sub)"></i>灰（負數）</th><td>5日線在10日線下，短線偏弱，<b style="color:var(--hot)">這套看法不適用</b>，先觀望。</td></tr>
+<tr><th><i class="dot" style="background:var(--cold)"></i>藍｜低檔</th><td>還沒熱起來，<b>位置最好</b>；但要確認股價站在5日線上，才算開始動。</td></tr>
+<tr><th><i class="dot" style="background:var(--five)"></i>金黃｜5香</th><td><b style="color:var(--green)">最理想的區間</b>：漲勢健康、不過熱，適合等待或續抱。</td></tr>
+<tr><th><i class="dot" style="background:var(--mid)"></i>橄欖｜過渡</th><td>開始偏熱，不急著加碼。</td></tr>
+<tr><th><i class="dot" style="background:var(--warn)"></i>橘｜警戒</th><td>熱了，<b style="color:var(--warn)">不追</b>。</td></tr>
+<tr><th><i class="dot" style="background:var(--hot)"></i>紅｜辣味</th><td><b style="color:var(--hot)">過熱</b>，短線隨時會回檔，不適合波段。</td></tr>
+</table>
+</section>
+
+<section class="panel">
+<h2>看方向：比數字本身更重要</h2>
+<table class="flow">
+<tr><th>正數，變大</th><td>力道在加強。<br>在藍、金黃區變大＝<b style="color:var(--green)">好事</b>；在橘、紅區還在變大＝越來越熱，<b style="color:var(--hot)">追高風險變大</b>。</td></tr>
+<tr><th>正數，變小</th><td>短線在降溫。<br>從高區（橘、紅）回落＝降溫中，<b>等它回到5香區再看</b>；在5香區小幅回落＝<b style="color:var(--green)">正常休息</b>。</td></tr>
+<tr><th>正數 → 負數</th><td>5日線跌破10日線，<b style="color:var(--warn)">短線轉弱</b>。剛轉負先觀望，不急著進場。</td></tr>
+<tr><th>負數，越來越負</th><td><b style="color:var(--hot)">還在走弱</b>，不碰。</td></tr>
+<tr><th>負數，往0靠近</th><td>跌勢在減緩，<b style="color:var(--green)">開始好轉</b>，但還不是進場時機。</td></tr>
+<tr><th>負數 → 正數</th><td>5日線重新站回10日線，<b style="color:var(--green)">轉強的起點</b>。<br>剛轉正會落在藍色低檔區；接下來看三件事：股價站穩5日線、乖乖繼續變大、中期乖乖也跟上。</td></tr>
+</table>
+</section>
+
+<section class="panel">
+<h2>三個綠燈條件</h2>
+<p>網頁「支撐／介入區」那一列會顯示，綠色＝符合、紅色＝不符合：</p>
+<p>① 乖乖比前一天<b>縮小</b>（在降溫）<br>② 收盤<b>站在5日線上</b><br>③ <b>沒跌破</b>前3天最低收盤</p>
+<p><b style="color:var(--green)">乖乖在5香區＋三個都綠</b>＝健康的休息，是比較舒服的位置。<br>有紅燈時，先等站回去再說。</p>
+</section>
+
+<section class="panel">
+<h2>中期乖乖（10日線 ÷ 20日線）</h2>
+<p>看中長期的底子穩不穩，搭配短期一起看：</p>
+<p>・短期變小、中期穩住或變大＝<b style="color:var(--green)">動能消化</b>，不用緊張<br>
+・短期、中期一起變大＝<b style="color:var(--green)">整體力道在加強</b><br>
+・短期、中期一起變小，而且連續好幾天＝<b style="color:var(--warn)">要提高警覺</b></p>
+</section>
+
+<section class="panel">
+<h2>要看的價位</h2>
+<p>網頁上<b class="pz">藍色粗體數字</b>都是價位：</p>
+<p>・<b>分界價</b>：明天收盤高於這個價，乖乖會變大；低於就變小。盤中可以直接拿現價比。<br>
+・<b>第一回落區</b>（約10日線）：強勢股回檔常在這裡止穩。<br>
+・<b>結構防守區</b>（約20日線）：最後防線，跌破要同時看中期乖乖有沒有變差。</p>
+</section>
+
+<section class="panel">
+<h2>網頁上的顏色規則</h2>
+<p><b style="color:var(--green)">綠＝好</b>　<b style="color:var(--warn)">橘＝提醒</b>　<b style="color:var(--hot)">紅＝危險</b>　<b class="pz">藍＝價位</b><br>
+乖乖數字的顏色＝它所在的區間顏色。<br>
+「結構失效」那三個條件：<b style="color:var(--hot)">✔ 紅＝轉弱條件成立（壞）</b>、<b style="color:var(--green)">✘ 綠＝沒成立（好）</b>。</p>
+</section>
+
+<section class="panel">
+<h2>記住一句話</h2>
+<p>乖乖值是<b>溫度計</b>，告訴你現在熱不熱、在變熱還是變冷；<b>不是買賣訊號</b>，最後還是要自己判斷。</p>
+</section>
+<p style="margin-top:16px"><a href="./" style="color:var(--green);font-weight:700">回乖乖值計算器</a></p></main></body></html>
